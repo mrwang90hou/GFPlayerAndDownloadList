@@ -38,6 +38,7 @@
 #import "FGTool.h"
 #import "GFAlertView.h"
 #import "GFDownLoadView.h"
+#import "SDWebImageDownloader.h"
 #define kCachePath (NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0])
 @interface MediaDetailVC ()<UITableViewDelegate, UITableViewDataSource>
 
@@ -70,6 +71,7 @@
     }
     return _cancelTaskView;
 }
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -114,13 +116,17 @@
         [cell addSubview:downLoadBtn];
 
         [downLoadBtn addTarget:self
-                        action:@selector(clickedDownloadPicAction)
+                        action:@selector(clickedDownloadAction)
               forControlEvents:UIControlEventTouchDown];
         
         UIButton *shareBtn = [MyTool buttonWithTitle:@"分享"
                                           titleColor:[UIColor blackColor]
                                            titleFont:[MyTool mediumFontWithSize:16*ScaleX]];
         [cell addSubview:shareBtn];
+        
+        [shareBtn addTarget:self
+                        action:@selector(clickedDownloadPicAction2)
+              forControlEvents:UIControlEventTouchDown];
         
         [downLoadBtn mas_makeConstraints:^(MASConstraintMaker *make) {
             make.centerX.equalTo(cell).offset(-mainWidth/4);
@@ -406,7 +412,8 @@
             NSString *pic2 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105727_0_4.JPG";
             NSString *pic3 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105749_0_4.JPG";
             NSString *pic4 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105729_0_4.JPG";
-            NSString *pic5 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105746_0_4.JPG";
+            NSString *pic5 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105711_0_4.JPG";
+            
             NSArray *UrlStr = @[pic1,pic2,pic3,pic4,pic5];
             // 创建队列
             dispatch_queue_t queue = dispatch_queue_create("com.download.task2", DISPATCH_QUEUE_SERIAL);
@@ -575,6 +582,62 @@
     }];
 }
 
+
+- (void)clickedDownloadPicAction2{
+    NSString *pic1 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105721_0_4.JPG";
+    NSString *pic2 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105727_0_4.JPG";
+    NSString *pic3 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105749_0_4.JPG";
+    NSString *pic4 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105729_0_4.JPG";
+    NSString *pic5 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105746_0_4.JPG";
+    NSArray *imgsArray = @[pic1,pic2,pic3,pic4,pic5];
+    NSMutableDictionary *resultDict = [NSMutableDictionary new];
+    // 创建队列
+    dispatch_queue_t queue = dispatch_queue_create("com.download.task3", DISPATCH_QUEUE_SERIAL);
+    //设置信号总量为1，保证只有一个进程执行
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
+    for(int i=0;i<imgsArray.count;i++) {
+        dispatch_async(queue, ^(){
+            //等待信号量
+            dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+            NSString *imgUrl = [imgsArray objectAtIndex:i];
+            SDWebImageDownloader *manager = [SDWebImageDownloader sharedDownloader];
+            manager.downloadTimeout = 20;
+            [manager downloadImageWithURL:[NSURL URLWithString:imgUrl]
+                                  options:SDWebImageDownloaderUseNSURLCache
+                                 progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+                                     NSLog(@"当前【第%d个】进度：%ld/%ld",i+1,(long)receivedSize,expectedSize);
+                                     NSLog(@"%3.2lf\%",100*(1.0 * receivedSize / expectedSize));
+                                 } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
+                                     if(finished){
+                                         if(error){
+                                             //在对应的位置放一个error对象
+                                             [resultDict setObject:error forKey:@(i)];
+                                         }else{
+                                             [resultDict setObject:image forKey:@(i)];
+                                         }
+                                         if(resultDict.count == imgsArray.count) {
+                                             //全部下载完成
+                                             NSArray *resultArray = [self createDownloadResultArray:resultDict count:imgsArray.count];
+//                                             return;
+                                         }
+                                         NSLog(@"🍁🍁🍁🍁🍁🍁🍁🍁🍁🍁🍁🍁🍁🍁");
+                                         if(i+1 == imgsArray.count){
+                                             //所有方法执行完
+                                         }
+                                         dispatch_semaphore_signal(semaphore);  //发送一个信号
+                                     }
+                                 }];
+        });
+    }
+}
+-(NSArray *)createDownloadResultArray:(NSDictionary *)dict count:(NSInteger)count {
+    NSMutableArray *resultArray = [NSMutableArray new];
+    for(int i=0;i<count;i++) {
+        NSObject *obj = [dict objectForKey:@(i)];
+        [resultArray addObject:obj];
+    }
+    return resultArray;
+}
 #pragma mark 使用 NSHomeDirectory() 创建文件目录videos And images
 - (void) createDirVideos {
     
@@ -595,6 +658,7 @@
     }
     NSLog(@"+++++++++++++++++++%@",filePath);
 }
+
 - (void) createDirImages {
     // NSHomeDirectory()：应用程序目录， @"Library/Caches/images"：在tmp文件夹下创建images 文件夹
     NSString *filePath=[NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches/images"];
@@ -612,8 +676,6 @@
     }
     NSLog(@"+++++++++++++++++++%@",filePath);
 }
-
-
 
 #pragma mark - getter
 - (DKAVPlayer *)avPlayer

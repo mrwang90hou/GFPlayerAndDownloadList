@@ -4,4 +4,5 @@ target 'GFPlayerAndDownloadList' do
     pod 'YYModel'
     pod 'IQKeyboardManager'
     pod 'AFNetworking'
+    pod 'SDWebImage'
 end
