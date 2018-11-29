@@ -47,7 +47,6 @@
 {
     NSLog(@"【startDownloadVideoWithModel】");
     NSMutableArray *array = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:kDownloadVideoList]];
-//    NSMutableArray *array = [NSMutableArray array];
     BOOL isAllowLoad = YES;
     for (NSDictionary *videoDic in array) {
         if ([model.downloadUrl isEqualToString:videoDic[@"url"]]) {
@@ -59,7 +58,6 @@
     if (!isAllowLoad) {
         return;
     }
-
     NSDictionary *dic = @{@"url":model.downloadUrl,
                           @"videoName":model.title,
                           @"isDownload":@(NO),
