@@ -26,5 +26,6 @@
 
 
 NSString *kDownloadVideoList = @"DownLoadVideoList";
+NSString *kDownloadImageList = @"DownLoadImageList";
 
 

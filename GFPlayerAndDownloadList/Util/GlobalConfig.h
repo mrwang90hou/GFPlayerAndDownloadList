@@ -57,3 +57,4 @@
 
 //下载列表
 extern NSString *kDownloadVideoList;
+extern NSString *kDownloadImageList;
