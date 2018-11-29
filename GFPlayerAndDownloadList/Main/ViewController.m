@@ -28,13 +28,29 @@
 #import "MediaDownloadVC.h"
 #import "DKAVPlayer.h"
 #import "DKFullScreenVC.h"
-
+#import "GFAlertView.h"
+#import "GFDownLoadView.h"
 @interface ViewController ()
+
+@property (nonatomic, strong) GFDownLoadView *cancelTaskView;
 
 @end
 
 @implementation ViewController
 
+- (GFDownLoadView *)cancelTaskView{
+    if(!_cancelTaskView){
+        
+        _cancelTaskView = [[[NSBundle mainBundle] loadNibNamed:@"GFDownLoadView" owner:nil options:nil] firstObject];
+        _cancelTaskView.frame = CGRectMake(0, 0, self.view.frame.size.width/5*4, 180);
+//        [_cancelTaskView mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.width.mas_equalTo(self.view.frame.size.width/4*3);
+//            make.height.mas_equalTo(180);
+//            make.center.equalTo(self.view);
+//        }];
+    }
+    return _cancelTaskView;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
@@ -72,6 +88,17 @@
         make.top.equalTo(listBtn.mas_bottom).offset(30);
     }];
     
+    UIButton *downLoadViewBtn = [MyTool buttonWithTitle:@"下载视图"];
+    [downLoadViewBtn addTarget:self
+                action:@selector(downLoadViewBtnAction)
+      forControlEvents:UIControlEventTouchDown];
+    [self.view addSubview:downLoadViewBtn];
+    
+    [downLoadViewBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.equalTo(self.view);
+        make.top.equalTo(fullBtn.mas_bottom).offset(30);
+    }];
+    
 }
 
 - (void)enterVideoVC
@@ -105,5 +132,7 @@
     }];
     [self presentViewController:fullPlayer animated:NO completion:nil];
 }
-
+- (void)downLoadViewBtnAction{
+    [[GFAlertView sharedMask] show:self.cancelTaskView withType:0];
+}
 @end

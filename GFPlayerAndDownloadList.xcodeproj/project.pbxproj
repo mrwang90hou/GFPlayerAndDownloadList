@@ -45,6 +45,10 @@
 		0B014FB221AEA37F009AD79F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B014FB121AEA37F009AD79F /* QuartzCore.framework */; };
 		0B014FB421AEA387009AD79F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B014FB321AEA387009AD79F /* CoreGraphics.framework */; };
 		0B014FB621AEA38F009AD79F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B014FB521AEA38F009AD79F /* UIKit.framework */; };
+		0BFDFAB621AF8C7C00233CCD /* GFDownLoadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BFDFAB021AF8C7C00233CCD /* GFDownLoadView.m */; };
+		0BFDFAB721AF8C7C00233CCD /* GFDownLoadView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0BFDFAB121AF8C7C00233CCD /* GFDownLoadView.xib */; };
+		0BFDFAB821AF8C7C00233CCD /* GFAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BFDFAB421AF8C7C00233CCD /* GFAlertView.m */; };
+		0BFDFAB921AF8C7C00233CCD /* test.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BFDFAB521AF8C7C00233CCD /* test.png */; };
 		7DB9BAF6EEA863BFE87CA200 /* libPods-GFPlayerAndDownloadList.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DAF17FEFB28E27DC64FC6F44 /* libPods-GFPlayerAndDownloadList.a */; };
 /* End PBXBuildFile section */
 
@@ -121,6 +125,12 @@
 		0B014FB121AEA37F009AD79F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		0B014FB321AEA387009AD79F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		0B014FB521AEA38F009AD79F /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		0BFDFAAF21AF8C7C00233CCD /* GFDownLoadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFDownLoadView.h; sourceTree = "<group>"; };
+		0BFDFAB021AF8C7C00233CCD /* GFDownLoadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GFDownLoadView.m; sourceTree = "<group>"; };
+		0BFDFAB121AF8C7C00233CCD /* GFDownLoadView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GFDownLoadView.xib; sourceTree = "<group>"; };
+		0BFDFAB321AF8C7C00233CCD /* GFAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFAlertView.h; sourceTree = "<group>"; };
+		0BFDFAB421AF8C7C00233CCD /* GFAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GFAlertView.m; sourceTree = "<group>"; };
+		0BFDFAB521AF8C7C00233CCD /* test.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test.png; sourceTree = "<group>"; };
 		86BA20F7D66302BB5E25FE52 /* Pods-GFPlayerAndDownloadList.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GFPlayerAndDownloadList.release.xcconfig"; path = "Pods/Target Support Files/Pods-GFPlayerAndDownloadList/Pods-GFPlayerAndDownloadList.release.xcconfig"; sourceTree = "<group>"; };
 		B64BC42BE09BA9983B66C731 /* Pods-GFPlayerAndDownloadList.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GFPlayerAndDownloadList.debug.xcconfig"; path = "Pods/Target Support Files/Pods-GFPlayerAndDownloadList/Pods-GFPlayerAndDownloadList.debug.xcconfig"; sourceTree = "<group>"; };
 		DAF17FEFB28E27DC64FC6F44 /* libPods-GFPlayerAndDownloadList.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GFPlayerAndDownloadList.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -166,6 +176,7 @@
 		0B014F2D21AEA1BE009AD79F /* GFPlayerAndDownloadList */ = {
 			isa = PBXGroup;
 			children = (
+				0BFDFAAE21AF8C7C00233CCD /* downLoadView */,
 				0B014F4421AEA28C009AD79F /* Resource */,
 				0B014F4921AEA294009AD79F /* Main */,
 				0B014F7F21AEA2BA009AD79F /* Media */,
@@ -330,6 +341,27 @@
 			path = AVPlayer;
 			sourceTree = "<group>";
 		};
+		0BFDFAAE21AF8C7C00233CCD /* downLoadView */ = {
+			isa = PBXGroup;
+			children = (
+				0BFDFAAF21AF8C7C00233CCD /* GFDownLoadView.h */,
+				0BFDFAB021AF8C7C00233CCD /* GFDownLoadView.m */,
+				0BFDFAB121AF8C7C00233CCD /* GFDownLoadView.xib */,
+				0BFDFAB221AF8C7C00233CCD /* GFAlertView */,
+				0BFDFAB521AF8C7C00233CCD /* test.png */,
+			);
+			path = downLoadView;
+			sourceTree = "<group>";
+		};
+		0BFDFAB221AF8C7C00233CCD /* GFAlertView */ = {
+			isa = PBXGroup;
+			children = (
+				0BFDFAB321AF8C7C00233CCD /* GFAlertView.h */,
+				0BFDFAB421AF8C7C00233CCD /* GFAlertView.m */,
+			);
+			path = GFAlertView;
+			sourceTree = "<group>";
+		};
 		8619D5BA7AF498AA3BD3FD03 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -413,7 +445,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0BFDFAB721AF8C7C00233CCD /* GFDownLoadView.xib in Resources */,
 				0B014F4821AEA28C009AD79F /* DINPro-Regular.otf in Resources */,
+				0BFDFAB921AF8C7C00233CCD /* test.png in Resources */,
 				0B014F3B21AEA1BF009AD79F /* LaunchScreen.storyboard in Resources */,
 				0B014F3821AEA1BF009AD79F /* Assets.xcassets in Resources */,
 				0B014F6921AEA2A2009AD79F /* Main.storyboard in Resources */,
@@ -477,12 +511,14 @@
 				0B014F9F21AEA2BA009AD79F /* MediaReportVC.m in Sources */,
 				0B014FA121AEA2BA009AD79F /* MediaModel.m in Sources */,
 				0B014F6D21AEA2A2009AD79F /* MyTool.m in Sources */,
+				0BFDFAB621AF8C7C00233CCD /* GFDownLoadView.m in Sources */,
 				0B014F9C21AEA2BA009AD79F /* MediaDetailVC.m in Sources */,
 				0B014F5321AEA294009AD79F /* AppDelegate.m in Sources */,
 				0B014F6A21AEA2A2009AD79F /* UIView+Coordinate.m in Sources */,
 				0B014F9D21AEA2BA009AD79F /* MediaDownloadVC.m in Sources */,
 				0B014F5521AEA294009AD79F /* BaseViewController.m in Sources */,
 				0B014FA321AEA2BA009AD79F /* DKAVPlayerToolBar.m in Sources */,
+				0BFDFAB821AF8C7C00233CCD /* GFAlertView.m in Sources */,
 				0B014F6B21AEA2A2009AD79F /* UIView+YYAdd.m in Sources */,
 				0B014F7E21AEA2AF009AD79F /* FGUploadManager.m in Sources */,
 				0B014F5421AEA294009AD79F /* BaseNavViewController.m in Sources */,
@@ -636,7 +672,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 3M7MSD7MMC;
+				DEVELOPMENT_TEAM = KEVDZPHMGU;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/GFPlayerAndDownloadList/PrefixHeader.pch";
 				INFOPLIST_FILE = GFPlayerAndDownloadList/Info.plist;
@@ -656,7 +692,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 3M7MSD7MMC;
+				DEVELOPMENT_TEAM = KEVDZPHMGU;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/GFPlayerAndDownloadList/PrefixHeader.pch";
 				INFOPLIST_FILE = GFPlayerAndDownloadList/Info.plist;
