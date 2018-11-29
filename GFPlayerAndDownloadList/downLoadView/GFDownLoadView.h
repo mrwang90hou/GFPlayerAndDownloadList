@@ -7,11 +7,16 @@
 
 #import <UIKit/UIKit.h>
 typedef void(^ClickQueRenBlock)(NSArray *whyArry);
+
 @interface GFDownLoadView : UIView
 
-- (IBAction)action_QueDing:(UIButton *)sender;
-
 - (IBAction)action_Cancel:(UIButton *)sender;
+@property (weak, nonatomic) IBOutlet UIProgressView *progress;
+@property (weak, nonatomic) IBOutlet UILabel *percentLabel;
+@property (weak, nonatomic) IBOutlet UILabel *byteLabel;
+@property (weak, nonatomic) IBOutlet UILabel *centLabel;
+@property (weak, nonatomic) IBOutlet UIView *endView;
+
 @property (nonatomic ,strong) ClickQueRenBlock queenBlock;
 
 @end

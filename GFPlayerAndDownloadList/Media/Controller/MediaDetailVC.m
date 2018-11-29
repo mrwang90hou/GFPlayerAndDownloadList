@@ -36,6 +36,8 @@
 #import "FGDownloadManager.h"
 #import <AFNetworking/AFNetworking.h>
 #import "FGTool.h"
+#import "GFAlertView.h"
+#import "GFDownLoadView.h"
 #define kCachePath (NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0])
 @interface MediaDetailVC ()<UITableViewDelegate, UITableViewDataSource>
 
@@ -48,11 +50,23 @@
 
 @property (nonatomic, strong) MediaModel *model;
 
+@property (nonatomic, strong) GFDownLoadView *cancelTaskView;
 
 @end
 
 @implementation MediaDetailVC
-
+- (GFDownLoadView *)cancelTaskView{
+    if(!_cancelTaskView){
+        _cancelTaskView = [[[NSBundle mainBundle] loadNibNamed:@"GFDownLoadView" owner:nil options:nil] firstObject];
+        _cancelTaskView.frame = CGRectMake(0, 0, self.view.frame.size.width/5*4, 180);
+        //        [_cancelTaskView mas_makeConstraints:^(MASConstraintMaker *make) {
+        //            make.width.mas_equalTo(self.view.frame.size.width/4*3);
+        //            make.height.mas_equalTo(180);
+        //            make.center.equalTo(self.view);
+        //        }];
+    }
+    return _cancelTaskView;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -142,11 +156,13 @@
     MediaEditView *editView = [[MediaEditView alloc] init];
     [editView showEditView];
     [editView setGetVideoNameBlock:^(NSString *name) {
+        
+        [[GFAlertView sharedMask] show:self.cancelTaskView withType:0];
+        
         if (name.length > 0) {
 //            MediaModel *model = [[MediaModel alloc] init];
 //            model.title = name;
 //            model.downloadUrl = weakSelf.UrlStr;
-            
             NSArray *nameArr = @[@"1",@"2",@"3",@"4",@"5"];
             NSString *music1 = @"http://192.72.1.1/SD/Normal/NK_D20181127_172224_1440.MP4";
             NSString *music2 = @"http://192.72.1.1/SD/Normal/NK_D20181127_172513_1440.MP4";
@@ -161,6 +177,7 @@
             //设置信号总量为1，保证只有一个进程执行
             dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
             for(int i=0;i<5;i++) {
+//                [self.cancelTaskView.centLabel setText:[NSString stringWithFormat:@"%d/%d",i+1,5]];
                 MediaModel *model = [[MediaModel alloc] init];
                 model.title = [nameArr objectAtIndex:i];
                 model.downloadUrl = [UrlStr objectAtIndex:i];
@@ -222,6 +239,7 @@
                     NSString  *fullPath = savePath;//要保存的沙盒路径
                     NSURLRequest *request1 = [NSURLRequest requestWithURL:url];//在线路径
 //                    self.HUD.hidden = NO;
+                    
                     NSURLSessionDownloadTask *task = [manager downloadTaskWithRequest:request1 progress:^(NSProgress *downloadProgress) {
                         [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                             //下载过程中由多个线程返回downloadProgress，无法给progress赋值进度，所以要选出主线程
@@ -229,6 +247,12 @@
                                 NSString *currentSize=[FGTool convertSize:downloadProgress.completedUnitCount];
                                 NSString *totalSize=[FGTool convertSize:downloadProgress.totalUnitCount];
                                 NSLog(@"当前第【%d】个视频下载进度：%@",i+1,[NSString stringWithFormat:@"%@/%@",currentSize,totalSize]);
+//                                _progressView.progress=[[FGDownloadManager shredManager] lastProgress:model.url];
+                                [self.cancelTaskView.centLabel setText:[NSString stringWithFormat:@"%d/%d",i+1,5]];
+                                self.cancelTaskView.progress.progress = downloadProgress.fractionCompleted;
+//                                [self.cancelTaskView.percentLabel setText:[downloadProgresslocalizedDescription substringToIndex:4]];//百分比
+                                [self.cancelTaskView.percentLabel setText:downloadProgress.localizedDescription];//百分比
+                                [self.cancelTaskView.byteLabel setText:[NSString stringWithFormat:@"%@/%@",currentSize,totalSize]];
                             }
                         }];
                     } destination:^NSURL *(NSURL *targetPath,NSURLResponse *response) {
@@ -241,8 +265,10 @@
                         if(error){
 //                            self.HUD.hidden = YES;
 //                            [RemindView showHUDWithText:@"下载失败" delay:1 onView:kYBKeyWindow];
+                            
                         }else{
 //                            [RemindView showHUDWithText:@"下载完成" delay:1 onView:kYBKeyWindow];
+                            
 //                            [ZLPhotoManager saveVideoToAblum:[NSURL fileURLWithPath:fullPath] completion:^(BOOL suc, PHAsset *asset) {
 //                                if (suc==YES) {
 //                                    dispatch_sync(dispatch_get_main_queue(), ^{
@@ -261,14 +287,20 @@
                                 //所有方法执行完
     //                            MediaDownloadVC *downloadVC = [[MediaDownloadVC alloc] init];
     //                            [weakSelf.navigationController pushViewController:downloadVC animated:YES];
+//                                [self.cancelTaskView action_Cancel:<#(UIButton *)#>];
+                                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                                    [self.cancelTaskView.endView setHidden:false];
+                                });
+//                                 5秒后自动隐藏
+                                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                                    
+                                    [[GFAlertView sharedMask] dismiss];
+                                });
                             }
                             dispatch_semaphore_signal(semaphore);  //发送一个信号
                         }
                     }];
                     [task resume];
-                    
-                    
-                    
                 });
             }
 //            MediaDownloadVC *downloadVC = [[MediaDownloadVC alloc] init];

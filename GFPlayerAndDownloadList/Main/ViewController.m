@@ -40,7 +40,6 @@
 
 - (GFDownLoadView *)cancelTaskView{
     if(!_cancelTaskView){
-        
         _cancelTaskView = [[[NSBundle mainBundle] loadNibNamed:@"GFDownLoadView" owner:nil options:nil] firstObject];
         _cancelTaskView.frame = CGRectMake(0, 0, self.view.frame.size.width/5*4, 180);
 //        [_cancelTaskView mas_makeConstraints:^(MASConstraintMaker *make) {
