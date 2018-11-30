@@ -45,6 +45,7 @@
 		0B014FB221AEA37F009AD79F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B014FB121AEA37F009AD79F /* QuartzCore.framework */; };
 		0B014FB421AEA387009AD79F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B014FB321AEA387009AD79F /* CoreGraphics.framework */; };
 		0B014FB621AEA38F009AD79F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B014FB521AEA38F009AD79F /* UIKit.framework */; };
+		0BF03D0321B0E47A00AF0A5D /* GKDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BF03D0121B0E47A00AF0A5D /* GKDownloadManager.m */; };
 		0BFDFAB621AF8C7C00233CCD /* GFDownLoadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BFDFAB021AF8C7C00233CCD /* GFDownLoadView.m */; };
 		0BFDFAB721AF8C7C00233CCD /* GFDownLoadView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0BFDFAB121AF8C7C00233CCD /* GFDownLoadView.xib */; };
 		0BFDFAB821AF8C7C00233CCD /* GFAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BFDFAB421AF8C7C00233CCD /* GFAlertView.m */; };
@@ -125,6 +126,8 @@
 		0B014FB121AEA37F009AD79F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		0B014FB321AEA387009AD79F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		0B014FB521AEA38F009AD79F /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		0BF03D0121B0E47A00AF0A5D /* GKDownloadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GKDownloadManager.m; sourceTree = "<group>"; };
+		0BF03D0221B0E47A00AF0A5D /* GKDownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GKDownloadManager.h; sourceTree = "<group>"; };
 		0BFDFAAF21AF8C7C00233CCD /* GFDownLoadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFDownLoadView.h; sourceTree = "<group>"; };
 		0BFDFAB021AF8C7C00233CCD /* GFDownLoadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GFDownLoadView.m; sourceTree = "<group>"; };
 		0BFDFAB121AF8C7C00233CCD /* GFDownLoadView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GFDownLoadView.xib; sourceTree = "<group>"; };
@@ -281,6 +284,7 @@
 		0B014F7F21AEA2BA009AD79F /* Media */ = {
 			isa = PBXGroup;
 			children = (
+				0BF03D0021B0E41800AF0A5D /* HTTPDownLoad */,
 				0B014F8021AEA2BA009AD79F /* Controller */,
 				0B014F8921AEA2BA009AD79F /* Model */,
 				0B014F8E21AEA2BA009AD79F /* View */,
@@ -339,6 +343,15 @@
 				0B014F9721AEA2BA009AD79F /* DKFullScreenVC.m */,
 			);
 			path = AVPlayer;
+			sourceTree = "<group>";
+		};
+		0BF03D0021B0E41800AF0A5D /* HTTPDownLoad */ = {
+			isa = PBXGroup;
+			children = (
+				0BF03D0221B0E47A00AF0A5D /* GKDownloadManager.h */,
+				0BF03D0121B0E47A00AF0A5D /* GKDownloadManager.m */,
+			);
+			path = HTTPDownLoad;
 			sourceTree = "<group>";
 		};
 		0BFDFAAE21AF8C7C00233CCD /* downLoadView */ = {
@@ -513,6 +526,7 @@
 				0B014F6D21AEA2A2009AD79F /* MyTool.m in Sources */,
 				0BFDFAB621AF8C7C00233CCD /* GFDownLoadView.m in Sources */,
 				0B014F9C21AEA2BA009AD79F /* MediaDetailVC.m in Sources */,
+				0BF03D0321B0E47A00AF0A5D /* GKDownloadManager.m in Sources */,
 				0B014F5321AEA294009AD79F /* AppDelegate.m in Sources */,
 				0B014F6A21AEA2A2009AD79F /* UIView+Coordinate.m in Sources */,
 				0B014F9D21AEA2BA009AD79F /* MediaDownloadVC.m in Sources */,
