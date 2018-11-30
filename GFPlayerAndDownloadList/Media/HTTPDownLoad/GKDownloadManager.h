@@ -15,7 +15,10 @@
  *  @param didFinishTotal 至此一共下载文件的大小
  *  @param Total          一共需要下载文件的大小
  */
-typedef void(^DownManagerProgressBlock)(NSProgress *progress);
+typedef void(^DownManagerProgressBlock1)(NSProgress *progress);
+
+
+typedef void (^DownManagerProgressBlock)(NSProgress *progress , NSString *index);
 
 @interface GKDownloadManager : NSObject
 

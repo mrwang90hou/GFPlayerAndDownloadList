@@ -30,6 +30,8 @@
 #import "DKFullScreenVC.h"
 #import "GFAlertView.h"
 #import "GFDownLoadView.h"
+#import "GKDownloadManager.h"
+#import "FGTool.h"
 @interface ViewController ()
 
 @property (nonatomic, strong) GFDownLoadView *cancelTaskView;
@@ -98,6 +100,16 @@
         make.top.equalTo(fullBtn.mas_bottom).offset(30);
     }];
     
+    UIButton *downLoadTestBtn = [MyTool buttonWithTitle:@"下载测试"];
+    [downLoadTestBtn addTarget:self
+                        action:@selector(downLoadTestBtnBtnAction)
+              forControlEvents:UIControlEventTouchDown];
+    [self.view addSubview:downLoadTestBtn];
+    
+    [downLoadTestBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.equalTo(self.view);
+        make.top.equalTo(downLoadViewBtn.mas_bottom).offset(30);
+    }];
 }
 
 - (void)enterVideoVC
@@ -134,4 +146,73 @@
 - (void)downLoadViewBtnAction{
     [[GFAlertView sharedMask] show:self.cancelTaskView withType:0];
 }
+//下载测试 btnAction
+- (void)downLoadTestBtnBtnAction{
+    GKDownloadManager *manager = [[GKDownloadManager alloc]init];
+//    NSArray *nameArr = @[@"1",@"2",@"3",@"4",@"5"];
+    NSString *music1 = @"http://192.72.1.1/SD/Normal/NK_D20181127_172224_1440.MP4";
+    NSString *music2 = @"http://192.72.1.1/SD/Normal/NK_D20181127_172513_1440.MP4";
+    NSString *music3 = @"http://192.72.1.1/SD/Normal/NK_D20181128_155308_1440.MP4";
+    NSString *music4 = @"http://192.72.1.1/SD/Normal/NK_D20181128_155342_1440.MP4";
+    NSString *music5 = @"http://192.72.1.1/SD/Normal/NK_D20181128_155353_1440.MP4";
+    NSArray *videoArr = @[music1,music2,music3,music4,music5];
+    
+    [[GFAlertView sharedMask] show:self.cancelTaskView withType:0];
+    [self.cancelTaskView.endView setHidden:true];
+    [manager downloadVideos:videoArr withProgressHandle:^(NSProgress *progress,NSString *index){
+        
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            //下载过程中由多个线程返回downloadProgress，无法给progress赋值进度，所以要选出主线程
+            if (progress) {
+                NSString *currentSize=[FGTool convertSize:progress.completedUnitCount];
+                NSString *totalSize=[FGTool convertSize:progress.totalUnitCount];
+                //            NSLog(@"当前第【%d】个视频下载进度：%@",i+1,[NSString stringWithFormat:@"%@/%@",currentSize,totalSize]);
+                //                                _progressView.progress=[[FGDownloadManager shredManager] lastProgress:model.url];
+//                for (int i = 1; i<=videoArr.count;) {
+//                    if ((int)progress == 1.0) {
+//                        i++;
+//                    }
+                    [self.cancelTaskView.centLabel setText:[NSString stringWithFormat:@"%@/%lu",index,(unsigned long)videoArr.count]];
+//                }
+                
+                self.cancelTaskView.progress.progress = progress.fractionCompleted;
+//                [self.cancelTaskView.percentLabel setText:[downloadProgresslocalizedDescription substringToIndex:4]];//百分比
+                [self.cancelTaskView.percentLabel setText:progress.localizedDescription];//百分比
+                [self.cancelTaskView.byteLabel setText:[NSString stringWithFormat:@"%@/%@",currentSize,totalSize]];
+            }
+        }];
+    } completion:^(NSArray *resultArray) {
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.cancelTaskView.endView setHidden:false];
+        });
+        //                                 5秒后自动隐藏
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            [[GFAlertView sharedMask] dismiss];
+        });
+        NSLog(@"下载完成");
+    }];
+    
+//    [manager downloadVideos:videoArr withTaskView:self.cancelTaskView completion:^(NSArray *resultArray) {
+//
+//        NSLog(@"下载完成");
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            [self.cancelTaskView.endView setHidden:false];
+//        });
+//        //                                 5秒后自动隐藏
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//
+//            [[GFAlertView sharedMask] dismiss];
+//        });
+//    } failure:^(NSError *err) {
+//        NSLog(@"err = %@",err);
+//    }];
+    
+    
+    
+    
+}
+
+
 @end

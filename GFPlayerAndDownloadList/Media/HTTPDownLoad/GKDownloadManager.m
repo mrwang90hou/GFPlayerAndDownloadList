@@ -265,7 +265,7 @@
 //                            NSLog(@"self.progressBlockHandle");
 //                            self.progressBlockHandle(downloadProgress);
 //                        }
-                        progresshandle(downloadProgress);
+                        progresshandle(downloadProgress,[NSString stringWithFormat:@"%d",i+1]);
                     }
 //                }];
 //                progresshandle = downloadProgress;
@@ -326,14 +326,6 @@
                         if(completionBlock){
                             completionBlock(@[]);
                         }
-                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                            [self.cancelTaskView.endView setHidden:false];
-                        });
-                        //                                 5秒后自动隐藏
-                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                            
-                            [[GFAlertView sharedMask] dismiss];
-                        });
                     }
                     dispatch_semaphore_signal(semaphore);  //发送一个信号
                 }
