@@ -52,6 +52,7 @@
     }
     return _cancelTaskView;
 }
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
@@ -100,7 +101,7 @@
         make.top.equalTo(fullBtn.mas_bottom).offset(30);
     }];
     
-    UIButton *downLoadTestBtn = [MyTool buttonWithTitle:@"下载测试"];
+    UIButton *downLoadTestBtn = [MyTool buttonWithTitle:@"下载视频测试"];
     [downLoadTestBtn addTarget:self
                         action:@selector(downLoadTestBtnBtnAction)
               forControlEvents:UIControlEventTouchDown];
@@ -110,6 +111,18 @@
         make.left.right.equalTo(self.view);
         make.top.equalTo(downLoadViewBtn.mas_bottom).offset(30);
     }];
+    
+    UIButton *downLoadPicTestBtn = [MyTool buttonWithTitle:@"下载图片测试"];
+    [downLoadPicTestBtn addTarget:self
+                        action:@selector(downLoadPicTestBtnBtnAction)
+              forControlEvents:UIControlEventTouchDown];
+    [self.view addSubview:downLoadPicTestBtn];
+    
+    [downLoadPicTestBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.equalTo(self.view);
+        make.top.equalTo(downLoadTestBtn.mas_bottom).offset(30);
+    }];
+    
 }
 
 - (void)enterVideoVC
@@ -192,6 +205,8 @@
             [[GFAlertView sharedMask] dismiss];
         });
         NSLog(@"下载完成");
+    }failure:^(NSError *err) {
+        NSLog(@"err = %@",err);
     }];
     
 //    [manager downloadVideos:videoArr withTaskView:self.cancelTaskView completion:^(NSArray *resultArray) {
@@ -213,6 +228,45 @@
     
     
 }
+//下载[图片]测试 btn Action
+- (void)downLoadPicTestBtnBtnAction{
+    GKDownloadManager *manager = [[GKDownloadManager alloc]init];
+    NSString *pic1 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111149_0_4.JPG";
+    NSString *pic2 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111521_0_4.JPG";
+    NSString *pic3 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111527_0_4.JPG";
+    NSString *pic4 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111529_0_4.JPG";
+    NSString *pic5 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111546_0_4.JPG";
+    NSString *pic6 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111149_0_4.JPG";
+    NSArray *imgsArray = @[pic1,pic2,pic3,pic4,pic5,pic6];
+    [[GFAlertView sharedMask] show:self.cancelTaskView withType:0];
+    [self.cancelTaskView.endView setHidden:true];
+    [manager downloadImages:imgsArray withProgressHandle:^(NSProgress *progress,NSString *index){
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            //下载过程中由多个线程返回downloadProgress，无法给progress赋值进度，所以要选出主线程
+            if (progress) {
+                NSString *currentSize=[FGTool convertSize:progress.completedUnitCount];
+                NSString *totalSize=[FGTool convertSize:progress.totalUnitCount];
+                [self.cancelTaskView.centLabel setText:[NSString stringWithFormat:@"%@/%lu",index,(unsigned long)imgsArray.count]];
 
-
+                self.cancelTaskView.progress.progress = progress.fractionCompleted;
+                //                [self.cancelTaskView.percentLabel setText:[downloadProgresslocalizedDescription substringToIndex:4]];//百分比
+                [self.cancelTaskView.percentLabel setText:progress.localizedDescription];//百分比
+                [self.cancelTaskView.byteLabel setText:[NSString stringWithFormat:@"%@/%@",currentSize,totalSize]];
+            }
+        }];
+    } completion:^(NSArray *resultArray) {
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.cancelTaskView.endView setHidden:false];
+        });
+//        5秒后自动隐藏
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            [[GFAlertView sharedMask] dismiss];
+        });
+        NSLog(@"下载完成");
+    }failure:^(NSError *err) {
+        NSLog(@"err = %@",err);
+    }];
+}
 @end

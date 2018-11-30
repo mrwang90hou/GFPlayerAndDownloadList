@@ -581,6 +581,7 @@
         }
     }];
 }
+
 - (void)clickedDownloadPicAction2{
     NSString *pic1 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111149_0_4.JPG";
     NSString *pic2 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111521_0_4.JPG";

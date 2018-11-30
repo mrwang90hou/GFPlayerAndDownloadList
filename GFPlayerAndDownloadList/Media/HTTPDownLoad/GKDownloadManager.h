@@ -38,9 +38,17 @@ typedef void (^DownManagerProgressBlock)(NSProgress *progress , NSString *index)
 - (void)downManagerProgressBlockHandle:(DownManagerProgressBlock)downManagerProgressBlockHandle;
 
 
-- (void)downloadImages:(NSArray<NSString *> *)imgsArray withProgressHandle:(DownManagerProgressBlock)progresshandle completion:(void(^)(NSArray *resultArray))completionBlock;
+- (void)downloadImages:(NSArray<NSString *> *)imgsArray withProgressHandle:(DownManagerProgressBlock)progresshandle completion:(void(^)(NSArray *resultArray))completionBlock failure:(void (^)(NSError *))failure;
 
-- (void)downloadVideos:(NSArray<NSString *> *)imgsArray withProgressHandle:(DownManagerProgressBlock)progresshandle completion:(void(^)(NSArray *resultArray))completionBlock;
+- (void)downloadVideos:(NSArray<NSString *> *)videosArray withProgressHandle:(DownManagerProgressBlock)progresshandle completion:(void(^)(NSArray *resultArray))completionBlock failure:(void (^)(NSError *))failure;
+
+
+
+
+
+
+
+
 - (void)downloadVideos:(NSArray<NSString *> *)imgsArray withTaskView:(GFDownLoadView *)taskView completion:(void(^)(NSArray *resultArray))completionBlock failure:(void (^)(NSError *))failure;
 
 @end
