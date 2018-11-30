@@ -407,19 +407,21 @@
             //            MediaModel *model = [[MediaModel alloc] init];
             //            model.title = name;
             //            model.downloadUrl = weakSelf.UrlStr;
-            NSArray *nameArr = @[@"1",@"2",@"3",@"4",@"5"];
+            NSArray *nameArr = @[@"1",@"2",@"3",@"4",@"5",@"6"];
             NSString *pic1 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111149_0_4.JPG";
             NSString *pic2 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111521_0_4.JPG";
             NSString *pic3 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111527_0_4.JPG";
             NSString *pic4 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111529_0_4.JPG";
             NSString *pic5 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111546_0_4.JPG";
-            NSString *pic6 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111149_0_4.JPG";
-            NSArray *UrlStr = @[pic1,pic2,pic3,pic4,pic5];
+            NSString *pic6 = @"http://192.72.1.1/SD/Photo/NK_P20181127_171514_0_4.JPG";
+            NSArray *UrlStr = @[pic1,pic2,pic3,pic4,pic5,pic6];
+            //创建文件夹
+            [self createDirImages];
             // 创建队列
             dispatch_queue_t queue = dispatch_queue_create("com.download.task2", DISPATCH_QUEUE_SERIAL);
             //设置信号总量为1，保证只有一个进程执行
             dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
-            for(int i=0;i<5;i++) {
+            for(int i=0;i<UrlStr.count;i++) {
                 MediaModel *model = [[MediaModel alloc] init];
                 model.title = [nameArr objectAtIndex:i];
                 model.downloadUrl = [UrlStr objectAtIndex:i];
@@ -469,8 +471,7 @@
 //                    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
 //                    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
                     /* 创建网络下载对象 */
-                    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain",@"application/json", @"text/json", @"text/javascript",@"text/html", nil ];
-//                    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain",@"application/json", @"text/json", @"text/javascript",@"text/html",@"image/jpeg", nil ];
+                    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain",@"application/json", @"text/json", @"text/javascript",@"text/html",@"image/jpeg", nil ];
 //                    mgr.responseSerializer.acceptableContentTypes =  [NSSetsetWithObject:@"text/plain"];
 //                    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
 //                    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"image/JPG",@"image/png",@"image/jepg",nil];//可下载@"text/json", @"text/javascript",@"text/html",@"video/mpeg",@"video/mp4",@"audio/mp3"等
@@ -510,8 +511,6 @@
                             NSLog(@"error.userInfo = %@!",error.userInfo);
                         }else{
                             //下载完成 保存到本地相册
-                            //创建文件夹
-                            [self createDirVideos];
                             //1.拿到cache文件夹的路径
                             NSString *cachePath=[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)lastObject];
                             //2,拿到cache文件夹和文件名
