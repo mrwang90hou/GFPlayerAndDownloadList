@@ -125,7 +125,7 @@
         [cell addSubview:shareBtn];
         
         [shareBtn addTarget:self
-                        action:@selector(clickedDownloadPicAction2)
+                        action:@selector(clickedDownloadPicAction)
               forControlEvents:UIControlEventTouchDown];
         
         [downLoadBtn mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -408,12 +408,12 @@
             //            model.title = name;
             //            model.downloadUrl = weakSelf.UrlStr;
             NSArray *nameArr = @[@"1",@"2",@"3",@"4",@"5"];
-            NSString *pic1 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105721_0_4.JPG";
-            NSString *pic2 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105727_0_4.JPG";
-            NSString *pic3 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105749_0_4.JPG";
-            NSString *pic4 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105729_0_4.JPG";
-            NSString *pic5 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105711_0_4.JPG";
-            
+            NSString *pic1 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111149_0_4.JPG";
+            NSString *pic2 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111521_0_4.JPG";
+            NSString *pic3 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111527_0_4.JPG";
+            NSString *pic4 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111529_0_4.JPG";
+            NSString *pic5 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111546_0_4.JPG";
+            NSString *pic6 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111149_0_4.JPG";
             NSArray *UrlStr = @[pic1,pic2,pic3,pic4,pic5];
             // 创建队列
             dispatch_queue_t queue = dispatch_queue_create("com.download.task2", DISPATCH_QUEUE_SERIAL);
@@ -430,6 +430,7 @@
                     BOOL isAllowLoad = YES;
                     for (NSDictionary *picDic in array) {
                         //                        NSLog(@"videoDic = %@",picDic);
+                        NSLog(@"🍁🍁🍁🍁🍁🍁🍁🍁🍁🍁%@",picDic[@"url"]);
                         if ([model.downloadUrl isEqualToString:picDic[@"url"]]) {
                             isAllowLoad = NO;
                             break;
@@ -469,6 +470,7 @@
 //                    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
                     /* 创建网络下载对象 */
                     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain",@"application/json", @"text/json", @"text/javascript",@"text/html", nil ];
+//                    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain",@"application/json", @"text/json", @"text/javascript",@"text/html",@"image/jpeg", nil ];
 //                    mgr.responseSerializer.acceptableContentTypes =  [NSSetsetWithObject:@"text/plain"];
 //                    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
 //                    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"image/JPG",@"image/png",@"image/jepg",nil];//可下载@"text/json", @"text/javascript",@"text/html",@"video/mpeg",@"video/mp4",@"audio/mp3"等
@@ -482,7 +484,7 @@
                             if (downloadProgress) {
                                 NSString *currentSize=[FGTool convertSize:downloadProgress.completedUnitCount];
                                 NSString *totalSize=[FGTool convertSize:downloadProgress.totalUnitCount];
-                                NSLog(@"当前第【%d】个视频下载进度：%@",i+1,[NSString stringWithFormat:@"%@/%@",currentSize,totalSize]);
+                                NSLog(@"当前第【%d】个图片下载进度：%@",i+1,[NSString stringWithFormat:@"%@/%@",currentSize,totalSize]);
                                 //                                _progressView.progress=[[FGDownloadManager shredManager] lastProgress:model.url];
                                 [self.cancelTaskView.centLabel setText:[NSString stringWithFormat:@"%d/%d",i+1,5]];
                                 self.cancelTaskView.progress.progress = downloadProgress.fractionCompleted;
@@ -524,7 +526,6 @@
                             //        UISaveVideoAtPathToSavedPhotosAlbum(file, self, nil, nil);
                             //    }
                             NSString *videoUrl = response.URL.description;
-                            //                            NSLog(@"videoUrl = %@",videoUrl);
                             for (int i = 0; i < self.imageList.count; i++) {
                                 NSDictionary *dic = self.imageList[i];
                                 if ([videoUrl rangeOfString:dic[@"url"]].location != NSNotFound) {
@@ -581,14 +582,13 @@
         }
     }];
 }
-
-
 - (void)clickedDownloadPicAction2{
-    NSString *pic1 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105721_0_4.JPG";
-    NSString *pic2 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105727_0_4.JPG";
-    NSString *pic3 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105749_0_4.JPG";
-    NSString *pic4 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105729_0_4.JPG";
-    NSString *pic5 = @"http://192.72.1.1/SD/Photo/NK_P20181123_105746_0_4.JPG";
+    NSString *pic1 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111149_0_4.JPG";
+    NSString *pic2 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111521_0_4.JPG";
+    NSString *pic3 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111527_0_4.JPG";
+    NSString *pic4 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111529_0_4.JPG";
+    NSString *pic5 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111546_0_4.JPG";
+    NSString *pic6 = @"http://192.72.1.1/SD/Photo/NK_P20181123_111149_0_4.JPG";
     NSArray *imgsArray = @[pic1,pic2,pic3,pic4,pic5];
     NSMutableDictionary *resultDict = [NSMutableDictionary new];
     // 创建队列
@@ -606,7 +606,7 @@
                                   options:SDWebImageDownloaderUseNSURLCache
                                  progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
                                      NSLog(@"当前【第%d个】进度：%ld/%ld",i+1,(long)receivedSize,expectedSize);
-                                     NSLog(@"%3.2lf\%",100*(1.0 * receivedSize / expectedSize));
+                                     NSLog(@"%3.2lf\%%",100*(1.0 * receivedSize / expectedSize));
                                  } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
                                      if(finished){
                                          if(error){
@@ -630,6 +630,7 @@
         });
     }
 }
+
 -(NSArray *)createDownloadResultArray:(NSDictionary *)dict count:(NSInteger)count {
     NSMutableArray *resultArray = [NSMutableArray new];
     for(int i=0;i<count;i++) {
