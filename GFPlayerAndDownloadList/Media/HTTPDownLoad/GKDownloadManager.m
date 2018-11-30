@@ -385,7 +385,6 @@
             //                    NSString *dateStr = [[ZYPHelper  shareHelper] dateToString:[NSDate date] withDateFormat:@"YYYYMMDDHHmmSS"];
             //                    NSString *savePath = [cachePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.mp4",nameArr]];
             //2,拿到cache文件夹和文件名
-            NSString *savePath=[cachePath stringByAppendingPathComponent:[NSString stringWithFormat:@"images/%@.jpg",[imgsArray objectAtIndex:i]]];
             AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
             //                    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
             //                    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
@@ -396,7 +395,6 @@
             //                    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"image/JPG",@"image/png",@"image/jepg",nil];//可下载@"text/json", @"text/javascript",@"text/html",@"video/mpeg",@"video/mp4",@"audio/mp3"等
             //                    manager.requestSerializer= [AFHTTPRequestSerializer serializer];
             manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-            NSString  *fullPath = savePath;//要保存的沙盒路径
             NSURLRequest *request1 = [NSURLRequest requestWithURL:url];//在线路径
             NSURLSessionDownloadTask *task = [manager downloadTaskWithRequest:request1 progress:^(NSProgress *downloadProgress) {
                 [[NSOperationQueue mainQueue] addOperationWithBlock:^{
@@ -408,9 +406,9 @@
             } destination:^NSURL *(NSURL *targetPath,NSURLResponse *response) {
                 NSString *path_sandox =NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask, YES)[0];
                 NSLog(@"path_sandox:%@",path_sandox);
-                NSString *path = [path_sandox stringByAppendingPathComponent:response.suggestedFilename];
+                NSString *path = [path_sandox stringByAppendingPathComponent:[NSString stringWithFormat:@"images/%@",response.suggestedFilename]];
                 NSLog(@"path:%@",path);
-                return [NSURL fileURLWithPath:fullPath];
+                return [NSURL fileURLWithPath:path];
             } completionHandler:^(NSURLResponse *_Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
                 if(error){
                     failure(error);
@@ -514,11 +512,9 @@
             NSURL *url = [NSURL URLWithString:urlstr];
             NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject];
             //                    NSString *dateStr = [[ZYPHelper  shareHelper] dateToString:[NSDate date] withDateFormat:@"YYYYMMDDHHmmSS"];
-            NSString *savePath = [cachePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.mp4",[videosArray objectAtIndex:i]]];
             AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
             manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"video/mpeg",@"video/mp4",@"audio/mp3",nil];//可下载@"text/json", @"text/javascript",@"text/html",@"video/mpeg",@"video/mp4",@"audio/mp3"等
             manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-            NSString  *fullPath = savePath;//要保存的沙盒路径
             NSURLRequest *request1 = [NSURLRequest requestWithURL:url];//在线路径
             NSURLSessionDownloadTask *task = [manager downloadTaskWithRequest:request1 progress:^(NSProgress *downloadProgress) {
 //                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
@@ -537,9 +533,9 @@
             } destination:^NSURL *(NSURL *targetPath,NSURLResponse *response) {
                 NSString *path_sandox =NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask, YES)[0];
                 NSLog(@"path_sandox:%@",path_sandox);
-                NSString *path = [path_sandox stringByAppendingPathComponent:response.suggestedFilename];
+                NSString *path = [path_sandox stringByAppendingPathComponent:[NSString stringWithFormat:@"videos/%@",response.suggestedFilename]];
                 NSLog(@"path:%@",path);
-                return [NSURL fileURLWithPath:fullPath];
+                return [NSURL fileURLWithPath:path];
             } completionHandler:^(NSURLResponse *_Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
                 if(error){
                     //                            self.HUD.hidden = YES;
