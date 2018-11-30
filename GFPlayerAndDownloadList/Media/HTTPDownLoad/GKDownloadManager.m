@@ -199,6 +199,147 @@
 //    }
 }
 
+
+- (void)downloadVideos:(NSArray<NSString *> *)imgsArray withTaskView:(GFDownLoadView *)taskView completion:(void(^)(NSArray *resultArray))completionBlock failure:(void (^)(NSError *))failure
+{
+    [[GFAlertView sharedMask] show:self.cancelTaskView withType:0];
+    [self.cancelTaskView.endView setHidden:true];
+    // 创建队列
+    dispatch_queue_t queue = dispatch_queue_create("com.download.task.vidoes1", DISPATCH_QUEUE_SERIAL);
+    //设置信号总量为1，保证只有一个进程执行
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
+    //创建文件夹
+    [GKDownloadManager createDirVideos];
+    for(int i=0;i<imgsArray.count;i++) {
+        NSString *downloadUrl = [imgsArray objectAtIndex:i];
+        dispatch_async(queue, ^(){
+            //等待信号量
+            dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+            NSMutableArray *array = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:kDownloadVideoList]];
+            BOOL isAllowLoad = YES;
+            for (NSDictionary *videoDic in array) {
+                if ([downloadUrl isEqualToString:videoDic[@"url"]]) {
+                    isAllowLoad = NO;
+                    break;
+                }
+            }
+            //如果视频已经存在，则返回不允许下载【留至版本更新】
+#pragma mark -//如果视频已经存在，则返回不允许下载【留至版本更新】
+            NSDictionary *dic = @{
+                                  @"isDownload":@(NO),
+                                  @"bytes":@(0),
+                                  @"fileName":@"",
+                                  @"url":downloadUrl,
+                                  @"time":@"",
+                                  @"format":@{},
+                                  };
+            if (!isAllowLoad) {
+                //                        continue;
+                //                        dispatch_semaphore_signal(semaphore);  //发送一个信号
+                //                        dispatch_async(dispatch_get_main_queue(), ^{
+                //                        });
+                //                        return;
+            }else{
+                [array insertObject:dic atIndex:0];
+                [[NSUserDefaults standardUserDefaults] setObject:[NSArray arrayWithArray:array] forKey:kDownloadVideoList];
+            }
+            self.videoList = array;
+            NSString *urlstr = downloadUrl;
+            urlstr = [urlstr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            NSURL *url = [NSURL URLWithString:urlstr];
+            NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject];
+            //                    NSString *dateStr = [[ZYPHelper  shareHelper] dateToString:[NSDate date] withDateFormat:@"YYYYMMDDHHmmSS"];
+            NSString *savePath = [cachePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.mp4",[imgsArray objectAtIndex:i]]];
+            AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+            manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"video/mpeg",@"video/mp4",@"audio/mp3",nil];//可下载@"text/json", @"text/javascript",@"text/html",@"video/mpeg",@"video/mp4",@"audio/mp3"等
+            manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+            NSString  *fullPath = savePath;//要保存的沙盒路径
+            NSURLRequest *request1 = [NSURLRequest requestWithURL:url];//在线路径
+            NSURLSessionDownloadTask *task = [manager downloadTaskWithRequest:request1 progress:^(NSProgress *downloadProgress) {
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    //                    //下载过程中由多个线程返回downloadProgress，无法给progress赋值进度，所以要选出主线程
+                    if (downloadProgress) {
+                        NSString *currentSize=[FGTool convertSize:downloadProgress.completedUnitCount];
+                        NSString *totalSize=[FGTool convertSize:downloadProgress.totalUnitCount];
+                        NSLog(@"当前第【%d】个视频下载进度：%@",i+1,[NSString stringWithFormat:@"%@/%@",currentSize,totalSize]);
+                        [taskView.centLabel setText:[NSString stringWithFormat:@"%d/%d",i+1,5]];
+                        taskView.progress.progress = downloadProgress.fractionCompleted;
+                        //                                [self.cancelTaskView.percentLabel setText:[downloadProgresslocalizedDescription substringToIndex:4]];//百分比
+                        [taskView.percentLabel setText:downloadProgress.localizedDescription];//百分比
+                        [taskView.byteLabel setText:[NSString stringWithFormat:@"%@/%@",currentSize,totalSize]];
+                    }
+                }];
+                
+            } destination:^NSURL *(NSURL *targetPath,NSURLResponse *response) {
+                NSString *path_sandox =NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask, YES)[0];
+                NSLog(@"path_sandox:%@",path_sandox);
+                NSString *path = [path_sandox stringByAppendingPathComponent:response.suggestedFilename];
+                NSLog(@"path:%@",path);
+                return [NSURL fileURLWithPath:fullPath];
+            } completionHandler:^(NSURLResponse *_Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
+                if(error){
+                    //                            self.HUD.hidden = YES;
+                    //                            [RemindView showHUDWithText:@"下载失败" delay:1 onView:kYBKeyWindow];
+                    failure(error);
+                }else{
+                    //下载完成 保存到本地相册
+                    //1.拿到cache文件夹的路径
+                    NSString *cachePath=[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)lastObject];
+                    //2,拿到cache文件夹和文件名
+                    NSString *fileCachePath=[cachePath stringByAppendingPathComponent:[NSString stringWithFormat:@"videos/%@",response.suggestedFilename]];
+                    NSString *fileName = response.suggestedFilename;
+                    NSLog(@"location = %@\ncache = %@\nfilePath =%@\nfileName = %@\n",filePath,cachePath,fileCachePath,fileName);
+                    //保存至缓存地址：cache
+                    [[NSFileManager defaultManager] moveItemAtURL:filePath toURL:[NSURL fileURLWithPath:fileCachePath] error:nil];
+                    //    //3，保存视频到相册
+                    //    if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(file)) {
+                    //        //保存相册核心代码
+                    //        UISaveVideoAtPathToSavedPhotosAlbum(file, self, nil, nil);
+                    //    }
+                    NSString *videoUrl = response.URL.description;
+                    //                            NSLog(@"videoUrl = %@",videoUrl);
+                    for (int i = 0; i < self.videoList.count; i++) {
+                        NSDictionary *dic = self.videoList[i];
+                        if ([videoUrl rangeOfString:dic[@"url"]].location != NSNotFound) {
+                            NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:dic];
+                            [dict setValue:@(YES) forKey:@"isDownload"];
+                            [dict setValue:@"2048MB" forKey:@"bytes"];
+                            [dict setValue:fileName forKey:@"fileName"];
+                            [dict setValue:videoUrl forKey:@"url"];
+                            [dict setValue:@"time" forKey:@"time"];
+                            NSDictionary *dic = @{
+                                                  @"size":@"2560x1440",
+                                                  @"fps":@"25",
+                                                  @"time":@"6s",
+                                                  };
+                            [dict setValue:dic forKey:@"format"];
+                            [self.videoList replaceObjectAtIndex:i withObject:dict];
+                            break;
+                        }
+                    }
+                    NSLog(@"self.videoList.count = %lu",(unsigned long)self.videoList.count);
+                    for (NSDictionary *dict in self.videoList) {
+                        NSLog(@"dict = %@",dict);
+                    }
+                    [[NSUserDefaults standardUserDefaults] setObject:[NSArray arrayWithArray:self.videoList] forKey:kDownloadVideoList];
+                    NSLog(@"🍁🍁🍁🍁🍁🍁🍁🍁🍁🍁🍁🍁🍁🍁");
+                    if(i+1 == imgsArray.count){
+                        if(completionBlock){
+                            completionBlock(@[]);
+                        }
+                    }
+                    
+                    dispatch_semaphore_signal(semaphore);  //发送一个信号
+                }
+            }];
+            [task resume];
+        });
+    }
+}
+
+
+#pragma mark -上述方法已弃用！！！
+
 - (void)downloadImages:(NSArray<NSString *> *)imgsArray withProgressHandle:(DownManagerProgressBlock)progresshandle completion:(void(^)(NSArray *resultArray))completionBlock failure:(void (^)(NSError *))failure{
     // 创建队列
     dispatch_queue_t queue = dispatch_queue_create("com.download.task.vidoes", DISPATCH_QUEUE_SERIAL);
@@ -459,143 +600,6 @@
     }
 }
 
-- (void)downloadVideos:(NSArray<NSString *> *)imgsArray withTaskView:(GFDownLoadView *)taskView completion:(void(^)(NSArray *resultArray))completionBlock failure:(void (^)(NSError *))failure
-{
-    [[GFAlertView sharedMask] show:self.cancelTaskView withType:0];
-    [self.cancelTaskView.endView setHidden:true];
-    // 创建队列
-    dispatch_queue_t queue = dispatch_queue_create("com.download.task.vidoes1", DISPATCH_QUEUE_SERIAL);
-    //设置信号总量为1，保证只有一个进程执行
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
-    //创建文件夹
-    [GKDownloadManager createDirVideos];
-    for(int i=0;i<imgsArray.count;i++) {
-        NSString *downloadUrl = [imgsArray objectAtIndex:i];
-        dispatch_async(queue, ^(){
-            //等待信号量
-            dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-            NSMutableArray *array = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:kDownloadVideoList]];
-            BOOL isAllowLoad = YES;
-            for (NSDictionary *videoDic in array) {
-                if ([downloadUrl isEqualToString:videoDic[@"url"]]) {
-                    isAllowLoad = NO;
-                    break;
-                }
-            }
-            //如果视频已经存在，则返回不允许下载【留至版本更新】
-#pragma mark -//如果视频已经存在，则返回不允许下载【留至版本更新】
-            NSDictionary *dic = @{
-                                  @"isDownload":@(NO),
-                                  @"bytes":@(0),
-                                  @"fileName":@"",
-                                  @"url":downloadUrl,
-                                  @"time":@"",
-                                  @"format":@{},
-                                  };
-            if (!isAllowLoad) {
-                //                        continue;
-                //                        dispatch_semaphore_signal(semaphore);  //发送一个信号
-                //                        dispatch_async(dispatch_get_main_queue(), ^{
-                //                        });
-                //                        return;
-            }else{
-                [array insertObject:dic atIndex:0];
-                [[NSUserDefaults standardUserDefaults] setObject:[NSArray arrayWithArray:array] forKey:kDownloadVideoList];
-            }
-            self.videoList = array;
-            NSString *urlstr = downloadUrl;
-            urlstr = [urlstr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-            NSURL *url = [NSURL URLWithString:urlstr];
-            NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject];
-            //                    NSString *dateStr = [[ZYPHelper  shareHelper] dateToString:[NSDate date] withDateFormat:@"YYYYMMDDHHmmSS"];
-            NSString *savePath = [cachePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.mp4",[imgsArray objectAtIndex:i]]];
-            AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-            manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"video/mpeg",@"video/mp4",@"audio/mp3",nil];//可下载@"text/json", @"text/javascript",@"text/html",@"video/mpeg",@"video/mp4",@"audio/mp3"等
-            manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-            NSString  *fullPath = savePath;//要保存的沙盒路径
-            NSURLRequest *request1 = [NSURLRequest requestWithURL:url];//在线路径
-            NSURLSessionDownloadTask *task = [manager downloadTaskWithRequest:request1 progress:^(NSProgress *downloadProgress) {
-                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                    //                    //下载过程中由多个线程返回downloadProgress，无法给progress赋值进度，所以要选出主线程
-                    if (downloadProgress) {
-                        NSString *currentSize=[FGTool convertSize:downloadProgress.completedUnitCount];
-                        NSString *totalSize=[FGTool convertSize:downloadProgress.totalUnitCount];
-                        NSLog(@"当前第【%d】个视频下载进度：%@",i+1,[NSString stringWithFormat:@"%@/%@",currentSize,totalSize]);
-                        [taskView.centLabel setText:[NSString stringWithFormat:@"%d/%d",i+1,5]];
-                        taskView.progress.progress = downloadProgress.fractionCompleted;
-                        //                                [self.cancelTaskView.percentLabel setText:[downloadProgresslocalizedDescription substringToIndex:4]];//百分比
-                        [taskView.percentLabel setText:downloadProgress.localizedDescription];//百分比
-                        [taskView.byteLabel setText:[NSString stringWithFormat:@"%@/%@",currentSize,totalSize]];
-                    }
-                }];
-                
-            } destination:^NSURL *(NSURL *targetPath,NSURLResponse *response) {
-                NSString *path_sandox =NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask, YES)[0];
-                NSLog(@"path_sandox:%@",path_sandox);
-                NSString *path = [path_sandox stringByAppendingPathComponent:response.suggestedFilename];
-                NSLog(@"path:%@",path);
-                return [NSURL fileURLWithPath:fullPath];
-            } completionHandler:^(NSURLResponse *_Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
-                if(error){
-                    //                            self.HUD.hidden = YES;
-                    //                            [RemindView showHUDWithText:@"下载失败" delay:1 onView:kYBKeyWindow];
-                    failure(error);
-                }else{
-                    //下载完成 保存到本地相册
-                    //1.拿到cache文件夹的路径
-                    NSString *cachePath=[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)lastObject];
-                    //2,拿到cache文件夹和文件名
-                    NSString *fileCachePath=[cachePath stringByAppendingPathComponent:[NSString stringWithFormat:@"videos/%@",response.suggestedFilename]];
-                    NSString *fileName = response.suggestedFilename;
-                    NSLog(@"location = %@\ncache = %@\nfilePath =%@\nfileName = %@\n",filePath,cachePath,fileCachePath,fileName);
-                    //保存至缓存地址：cache
-                    [[NSFileManager defaultManager] moveItemAtURL:filePath toURL:[NSURL fileURLWithPath:fileCachePath] error:nil];
-                    //    //3，保存视频到相册
-                    //    if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(file)) {
-                    //        //保存相册核心代码
-                    //        UISaveVideoAtPathToSavedPhotosAlbum(file, self, nil, nil);
-                    //    }
-                    NSString *videoUrl = response.URL.description;
-                    //                            NSLog(@"videoUrl = %@",videoUrl);
-                    for (int i = 0; i < self.videoList.count; i++) {
-                        NSDictionary *dic = self.videoList[i];
-                        if ([videoUrl rangeOfString:dic[@"url"]].location != NSNotFound) {
-                            NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:dic];
-                            [dict setValue:@(YES) forKey:@"isDownload"];
-                            [dict setValue:@"2048MB" forKey:@"bytes"];
-                            [dict setValue:fileName forKey:@"fileName"];
-                            [dict setValue:videoUrl forKey:@"url"];
-                            [dict setValue:@"time" forKey:@"time"];
-                            NSDictionary *dic = @{
-                                                  @"size":@"2560x1440",
-                                                  @"fps":@"25",
-                                                  @"time":@"6s",
-                                                  };
-                            [dict setValue:dic forKey:@"format"];
-                            [self.videoList replaceObjectAtIndex:i withObject:dict];
-                            break;
-                        }
-                    }
-                    NSLog(@"self.videoList.count = %lu",(unsigned long)self.videoList.count);
-                    for (NSDictionary *dict in self.videoList) {
-                        NSLog(@"dict = %@",dict);
-                    }
-                    [[NSUserDefaults standardUserDefaults] setObject:[NSArray arrayWithArray:self.videoList] forKey:kDownloadVideoList];
-                    NSLog(@"🍁🍁🍁🍁🍁🍁🍁🍁🍁🍁🍁🍁🍁🍁");
-                    if(i+1 == imgsArray.count){
-                        if(completionBlock){
-                            completionBlock(@[]);
-                        }
-                    }
-                    
-                    dispatch_semaphore_signal(semaphore);  //发送一个信号
-                }
-            }];
-            [task resume];
-        });
-    }
-}
-
 #pragma mark 使用 NSHomeDirectory() 创建文件目录videos And images
 + (void) createDirVideos {
     
@@ -634,6 +638,5 @@
     }
     NSLog(@"+++++++++++++++++++%@",filePath);
 }
-
 
 @end

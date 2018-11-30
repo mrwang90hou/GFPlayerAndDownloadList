@@ -32,7 +32,11 @@ typedef void (^DownManagerProgressBlock)(NSProgress *progress , NSString *index)
 + (NSObject *)getSDWebImageDownloader:(NSString *)imgUrl count:(NSInteger)count;
 
 
+- (void)downloadVideos:(NSArray<NSString *> *)imgsArray withTaskView:(GFDownLoadView *)taskView completion:(void(^)(NSArray *resultArray))completionBlock failure:(void (^)(NSError *))failure;
 
+
+
+#pragma mark -上述方法已弃用！！！
 @property (nonatomic, copy)DownManagerProgressBlock progressBlockHandle;    //下载过程中的回调
 //设置相关回调
 - (void)downManagerProgressBlockHandle:(DownManagerProgressBlock)downManagerProgressBlockHandle;
@@ -41,14 +45,5 @@ typedef void (^DownManagerProgressBlock)(NSProgress *progress , NSString *index)
 - (void)downloadImages:(NSArray<NSString *> *)imgsArray withProgressHandle:(DownManagerProgressBlock)progresshandle completion:(void(^)(NSArray *resultArray))completionBlock failure:(void (^)(NSError *))failure;
 
 - (void)downloadVideos:(NSArray<NSString *> *)videosArray withProgressHandle:(DownManagerProgressBlock)progresshandle completion:(void(^)(NSArray *resultArray))completionBlock failure:(void (^)(NSError *))failure;
-
-
-
-
-
-
-
-
-- (void)downloadVideos:(NSArray<NSString *> *)imgsArray withTaskView:(GFDownLoadView *)taskView completion:(void(^)(NSArray *resultArray))completionBlock failure:(void (^)(NSError *))failure;
 
 @end

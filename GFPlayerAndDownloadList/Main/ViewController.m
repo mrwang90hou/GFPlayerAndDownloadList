@@ -156,10 +156,11 @@
     }];
     [self presentViewController:fullPlayer animated:NO completion:nil];
 }
+
 - (void)downLoadViewBtnAction{
     [[GFAlertView sharedMask] show:self.cancelTaskView withType:0];
 }
-//下载测试 btnAction
+//下载【视频】测试 btnAction
 - (void)downLoadTestBtnBtnAction{
     GKDownloadManager *manager = [[GKDownloadManager alloc]init];
 //    NSArray *nameArr = @[@"1",@"2",@"3",@"4",@"5"];
