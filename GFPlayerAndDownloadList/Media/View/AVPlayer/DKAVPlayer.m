@@ -211,8 +211,7 @@
     }
     NSURL *mediaUrl;
     if (![urlStr hasPrefix:@"http"]) {
-//        本地视频
-        
+        //本地视频
         NSString *folderPath=[NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches/videos"];
         NSString *fileNamePath = [folderPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@", urlStr]];// 保存文件的名称
 //        urlStr = [[NSBundle mainBundle] pathForResource:urlStr ofType:@"mp4"];

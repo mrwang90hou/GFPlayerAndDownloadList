@@ -422,11 +422,11 @@
                     NSLog(@"location = %@\ncache = %@\nfilePath =%@\nfileName = %@\n",filePath,cachePath,fileCachePath,fileName);
                     //保存至缓存地址：cache
                     [[NSFileManager defaultManager] moveItemAtURL:filePath toURL:[NSURL fileURLWithPath:fileCachePath] error:nil];
-                    //    //3，保存视频到相册
-                    //    if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(file)) {
-                    //        //保存相册核心代码
-                    //        UISaveVideoAtPathToSavedPhotosAlbum(file, self, nil, nil);
-                    //    }
+//                        //3，保存视频到相册
+//                        if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(file)) {
+//                            //保存相册核心代码
+//                            UISaveVideoAtPathToSavedPhotosAlbum(file, self, nil, nil);
+//                        }
                     NSString *videoUrl = response.URL.description;
                     for (int i = 0; i < self.imageList.count; i++) {
                         NSDictionary *dic = self.imageList[i];
